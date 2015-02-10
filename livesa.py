@@ -29,15 +29,16 @@ class CustomButton(Button):
     
     def __init__(self, **kwargs):
         '''
-        Sobreescribimos la funcion init del widget Button
+        Sobreescribimos la funcion __init__ de la clase Button
         '''
         
-        #llamamos a la funcion contructor del objeto button
-        super(CustomButton, self).__init__(**kwargs)
-        
-        with self.canvas.before:
-            Color(1, 1, 1, 1)
-            Rectangle(source='background.jpg', size=Window.size)
+        #llamamos a la funcion contructor del objeto button y le indicamos por default la imagen que usara de fondo
+        super(CustomButton, self).__init__(background_normal='styles/backgrounds/blueroundsquare.png',
+                                           size_hint=(None,None),   #esto es necesario para poder cambiar el tama;o del widget, de lo contrario siempre toma el tama;o de su padre (1,1)
+                                           size=(300,80),   #
+                                           pos=(100,100),
+                                           **kwargs)
+                                           
 
 class Livesa(FloatLayout):
     '''
