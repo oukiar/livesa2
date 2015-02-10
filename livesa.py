@@ -34,6 +34,7 @@ class CustomButton(Button):
         
         #llamamos a la funcion contructor del objeto button y le indicamos por default la imagen que usara de fondo
         super(CustomButton, self).__init__(background_normal='styles/backgrounds/blueroundsquare.png',
+                                           background_down='styles/backgrounds/blueroundsquarepressed.png',
                                            size_hint=(None,None),   #esto es necesario para poder cambiar el tama;o del widget, de lo contrario siempre toma el tama;o de su padre (1,1)
                                            size=(300,80),   #
                                            pos=(100,100),
