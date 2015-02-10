@@ -36,10 +36,25 @@ class CustomButton(Button):
         #llamamos a la funcion contructor del objeto button y le indicamos por default la imagen que usara de fondo
         super(CustomButton, self).__init__(background_normal='styles/backgrounds/blueroundsquare.png',
                                            background_down='styles/backgrounds/blueroundsquarepressed.png',
-                                           size_hint_y=None,   #esto es necesario para poder cambiar el tama;o del widget, de lo contrario siempre toma el tama;o de su padre (1,1)
+                                           #size_hint_y=None,   #esto es necesario para poder cambiar el tama;o del widget, de lo contrario siempre toma el tama;o de su padre (1,1)
                                            #size=(300,80),   #
                                            #height=80,
-                                           pos=(100,100),
+                                           #pos=(100,100),
+                                           **kwargs)
+              
+class TabButton(Button):
+    '''
+    Boton con fondo personalizado ... 
+    '''
+    
+    def __init__(self, **kwargs):
+        '''
+        Sobreescribimos la funcion __init__ de la clase Button
+        '''
+        
+        #llamamos a la funcion contructor del objeto button y le indicamos por default la imagen que usara de fondo
+        super(TabButton, self).__init__(background_normal='styles/backgrounds/bluesquare.png',
+                                           #background_down='styles/backgrounds/bluesquarepressed.png',
                                            **kwargs)
                                            
 class SuperiorMenu(AnchorLayout):
@@ -48,12 +63,12 @@ class SuperiorMenu(AnchorLayout):
                                             anchor_y='top', 
                                             **kwargs)
         
-        self.box = BoxLayout(size_hint_y=None, height=80)
+        self.box = BoxLayout(size_hint_y=None, height=50, spacing=2)
         
-        self.box.add_widget(CustomButton(text='Productos', on_press=self.on_productos) )
-        self.box.add_widget(CustomButton(text='Cliente', on_press=self.on_clientes) )
-        self.box.add_widget(CustomButton(text='Ruta', on_press=self.on_rutas) )
-        self.box.add_widget(CustomButton(text='Vendedor', on_press=self.on_vendedor) )
+        self.box.add_widget(TabButton(text='Productos', on_press=self.on_productos) )
+        self.box.add_widget(TabButton(text='Cliente', on_press=self.on_clientes) )
+        self.box.add_widget(TabButton(text='Ruta', on_press=self.on_rutas) )
+        self.box.add_widget(TabButton(text='Vendedor', on_press=self.on_vendedor) )
 
         self.add_widget(self.box)
 
