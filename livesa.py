@@ -17,6 +17,7 @@ Notas:
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.button import Button
 
 from kivy.graphics import Color, Rectangle
@@ -35,11 +36,38 @@ class CustomButton(Button):
         #llamamos a la funcion contructor del objeto button y le indicamos por default la imagen que usara de fondo
         super(CustomButton, self).__init__(background_normal='styles/backgrounds/blueroundsquare.png',
                                            background_down='styles/backgrounds/blueroundsquarepressed.png',
-                                           size_hint=(None,None),   #esto es necesario para poder cambiar el tama;o del widget, de lo contrario siempre toma el tama;o de su padre (1,1)
-                                           size=(300,80),   #
+                                           size_hint_y=None,   #esto es necesario para poder cambiar el tama;o del widget, de lo contrario siempre toma el tama;o de su padre (1,1)
+                                           #size=(300,80),   #
+                                           #height=80,
                                            pos=(100,100),
                                            **kwargs)
                                            
+class SuperiorMenu(AnchorLayout):
+    def __init__(self, **kwargs):
+        super(SuperiorMenu, self).__init__(anchor_x='center', 
+                                            anchor_y='top', 
+                                            **kwargs)
+        
+        self.box = BoxLayout(size_hint_y=None, height=80)
+        
+        self.box.add_widget(CustomButton(text='Productos', on_press=self.on_productos) )
+        self.box.add_widget(CustomButton(text='Cliente', on_press=self.on_clientes) )
+        self.box.add_widget(CustomButton(text='Ruta', on_press=self.on_rutas) )
+        self.box.add_widget(CustomButton(text='Vendedor', on_press=self.on_vendedor) )
+
+        self.add_widget(self.box)
+
+    def on_productos(self, w):
+        print 'Go products'
+        
+    def on_clientes(self, w):
+        print 'Go clientes'
+        
+    def on_rutas(self, w):
+        print 'Go rutas'
+        
+    def on_vendedor(self, w):
+        print 'Go vendedor'
 
 class Livesa(FloatLayout):
     '''
@@ -57,12 +85,8 @@ class Livesa(FloatLayout):
         
         #definimos la funcion que se ejcutara cuando cambie de tamaño la ventana
         self.bind(size=self.draw_background)
-        
-        #se agrega un widget personalizado (definido en la linea 25)
-        self.mybutton = CustomButton(text='Hola mundo')
-        
-        #agregamos el boton a la lista de hijos de este widget, solo cuando es agregado con add_widget es dibujado en pantalla
-        self.add_widget(self.mybutton)
+
+        self.add_widget(SuperiorMenu() )
         
     def draw_background(self, w, val):
         '''
