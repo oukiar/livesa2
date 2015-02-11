@@ -46,7 +46,18 @@ class CustomButton(Button):
                                            #height=80,
                                            #pos=(100,100),
                                            **kwargs)
-             
+
+class DropButton(Button):
+    
+    def __init__(self, **kwargs):
+        
+        #llamamos a la funcion contructor del objeto button y le indicamos por default la imagen que usara de fondo
+        super(DropButton, self).__init__(background_normal='styles/backgrounds/droplist.png',
+                                           background_down='styles/backgrounds/droplistdown.png',
+                                            markup=True,
+                                         font_size=24,
+                                           **kwargs)
+
 class DateButton(Button):
     
     def __init__(self, **kwargs):
@@ -59,20 +70,6 @@ class DateButton(Button):
               
 
 class DatePicker(BoxLayout):
-    
-    months = ('01',
-                '02',
-                '03',
-                '04',
-                '05',
-                '06',
-                '07',
-                '08',
-                '09',
-                '10',
-                '11',
-                '12'
-                )
     
     def __init__(self, **kwargs):
         
@@ -149,6 +146,7 @@ class Fieldset(BoxLayout):
         self.bind(size=self.draw_background)
         
     def draw_background(self, w, val):
+        self.canvas.before.clear()
         with self.canvas.before:
             Color(1, 1, 1, 1)
             self.rect = Rectangle(source='styles/backgrounds/fieldsetbackground.png', size=self.size, pos=self.pos)
@@ -171,15 +169,21 @@ class TabButton(Button):
 class SuperiorMenu(AnchorLayout):
     def __init__(self, **kwargs):
         super(SuperiorMenu, self).__init__(anchor_x='center', 
-                                            anchor_y='top', 
+                                           anchor_y='top',
+                                           size_hint_y=None,
+                                           height=70,
                                             **kwargs)
         
-        self.box = BoxLayout(size_hint_y=None, height=50, spacing=2)
+        self.box = BoxLayout(spacing=2,
+                             size_hint_x=None,
+                             #height=50,
+                             width=600
+                             )
         
-        self.box.add_widget(TabButton(text='Productos', on_press=self.on_productos) )
-        self.box.add_widget(TabButton(text='Cliente', on_press=self.on_clientes) )
-        self.box.add_widget(TabButton(text='Ruta', on_press=self.on_rutas) )
-        self.box.add_widget(TabButton(text='Vendedor', on_press=self.on_vendedor) )
+        self.box.add_widget(TabButton(text='Productos', on_press=self.on_productos, size_hint_x=None, width=150) )
+        self.box.add_widget(TabButton(text='Cliente', on_press=self.on_clientes, size_hint_x=None, width=150) )
+        self.box.add_widget(TabButton(text='Ruta', on_press=self.on_rutas, size_hint_x=None, width=150) )
+        self.box.add_widget(TabButton(text='Vendedor', on_press=self.on_vendedor, size_hint_x=None, width=150) )
 
         self.add_widget(self.box)
 
@@ -220,7 +224,7 @@ class Livesa(FloatLayout):
         #esto es necesario debido a que la clase madre tambien necesita realizar algunas operaciones de inicializacion
         super(Livesa, self).__init__(**kwargs)
         
-        self.layout = BoxLayout(orientation='vertical')
+        self.layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
         
         #definimos la funcion que se ejcutara cuando cambie de tamaño la ventana
         self.bind(size=self.draw_background)
@@ -228,15 +232,15 @@ class Livesa(FloatLayout):
         self.layout.add_widget(SuperiorMenu() )
         
         #CATEGORIAS
-        self.fieldset_categorias = Fieldset(padding=20)
-        self.fieldset_categorias.add_widget(CustomButton(text='Productos'))
-        self.fieldset_categorias.add_widget(CustomButton(text='Marcas'))
-        self.fieldset_categorias.add_widget(CustomButton(text='Capacidades'))
-        self.fieldset_categorias.add_widget(CustomButton(text='Tipos'))
+        self.fieldset_categorias = Fieldset(padding=20, spacing=20, size_hint_y=None, height=80)
+        self.fieldset_categorias.add_widget(DropButton(text='[color=000000]Productos[/color]'))
+        self.fieldset_categorias.add_widget(DropButton(text='[color=000000]Marcas[/color]'))
+        self.fieldset_categorias.add_widget(DropButton(text='[color=000000]Capacidades[/color]'))
+        self.fieldset_categorias.add_widget(DropButton(text='[color=000000]Tipos[/color]'))
         self.layout.add_widget(self.fieldset_categorias)
         
         #FECHAS
-        self.fieldset_fechas = Fieldset(padding=20, orientation='vertical')
+        self.fieldset_fechas = Fieldset(padding=15, orientation='vertical', size_hint_y=None, height=100)
         self.box_fechas = BoxLayout()
         
         self.box_fechas.add_widget(DatePicker(label='Desde: ') )
@@ -251,17 +255,22 @@ class Livesa(FloatLayout):
         self.layout.add_widget(self.fieldset_fechas)
         
         #LUGAR-CLIENTE
-        self.fieldset_lugarcliente = BoxLayout(padding=20)
-        self.fieldset_lugarcliente.add_widget(CustomButton(text='Lugar / Zona'))
-        self.fieldset_lugarcliente.add_widget(CustomButton(text='Clientes'))
+        self.fieldset_lugarcliente = BoxLayout(padding=20, spacing=20, size_hint_y=None, height=80)
+        self.fieldset_lugarcliente.add_widget(DropButton(text='[color=000000]Lugar / Zona[/color]'))
+        self.fieldset_lugarcliente.add_widget(DropButton(text='[color=000000]Clientes[/color]'))
         
         self.layout.add_widget(self.fieldset_lugarcliente)
         
-        self.add_widget(self.layout)
         
         #BOTON DE CONSULTA
+        self.layout.add_widget(CustomButton(text='Consulta', size_hint=(None,None), size=(300,50)))
         
         #RESULTADO
+        self.fieldset_result = Fieldset(padding=20)
+        self.layout.add_widget(self.fieldset_result)
+        
+        
+        self.add_widget(self.layout)
         
     def draw_background(self, w, val):
         '''
@@ -271,11 +280,14 @@ class Livesa(FloatLayout):
         #Todo widget contiene un objeto canvas el cual se encarga de 
         #todas las operaciones de dibujo de cada widget.
         
+        
+        self.canvas.before.clear()
+        
         #cambiamos las intrucciones de dibujo 'antes de' las intrucciones
         #normales para dibujar el widget, basicamente en la siguiente sentencia
         #se cambia el color de fondo (y no afecta las intrucciones normales de dibujo del widget)
         with self.canvas.before:
-            Color(1, 1, 1, 1) #color en formato RGBA, blanco en este caso ... los valores deben ser entre zero y 1
+            Color(.95, .95, .95, 1) #color en formato RGBA, blanco en este caso ... los valores deben ser entre zero y 1
             
             #dibujamos un rectangulo con el color actual (seleccionado en la instruccion anterior)
             self.rect = Rectangle(size=Window.size)
