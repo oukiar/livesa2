@@ -171,7 +171,7 @@ class SuperiorMenu(AnchorLayout):
         super(SuperiorMenu, self).__init__(anchor_x='center', 
                                            anchor_y='top',
                                            size_hint_y=None,
-                                           height=70,
+                                           height=40,
                                             **kwargs)
         
         self.box = BoxLayout(spacing=2,
