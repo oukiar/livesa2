@@ -57,6 +57,17 @@ class DropButton(Button):
                                             markup=True,
                                          font_size=24,
                                            **kwargs)
+                                           
+        self.drop = DropDown()
+                                           
+        self.values = kwargs.get('values', None)
+        
+        if self.values != None:
+            
+            #llenar todos los elementos
+            for i in sorted(self.values):
+                self.prod = CheckItem(label=i)
+                self.drop.add_widget(self.prod)
 
 class DateButton(Button):
     
@@ -142,7 +153,7 @@ class Fieldset(BoxLayout):
     def __init__(self, **kwargs):
         super(Fieldset, self).__init__(**kwargs)
         
-        #definimos la funcion que se ejcutara cuando cambie de tamaño la ventana
+        #definimos la funcion que se ejcutara cuando cambie de tamaño el widget
         self.bind(size=self.draw_background)
         
     def draw_background(self, w, val):
@@ -209,6 +220,8 @@ class CheckItem(BoxLayout):
         self.label = Label(text=kwargs.get('label'), markup=True, size_hint_x=None, width=200)
         self.add_widget(self.label)
         
+class ProductFilter(Fieldset):
+    pass
 
 class Livesa(FloatLayout):
     '''
