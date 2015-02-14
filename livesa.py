@@ -214,7 +214,7 @@ class Fieldset(BoxLayout):
         self.canvas.before.clear()
         with self.canvas.before:
             Color(1, 1, 1, 1)
-            self.rect = Rectangle(source='styles/backgrounds/fieldsetbackground.png', size=self.size, pos=self.pos)
+            self.rect = Rectangle(source='styles/backgrounds/fieldsetbackgroundbig.png', size=self.size, pos=self.pos)
               
 class TabButton(Button):
     '''
