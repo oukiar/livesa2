@@ -60,6 +60,16 @@ class DropDownList(DropDown):
 
         self.bind(size=self._update_rect, pos=self._update_rect)
         
+        #for mouse over event
+        Window.bind(mouse_pos=self.check_over)
+        
+        self.opacity = .9
+        
+    def check_over(self, instance, value):
+        if self.collide_point(value[0], value[1]):
+            self.opacity = 1
+        else:
+            self.opacity = .9
 
     def _update_rect(self, instance, value):
         self.rect.pos = instance.pos
@@ -96,6 +106,19 @@ class DropButton(Button):
                                             label='[color=%s]'%self.item_textcolor + i + '[/color]'
                                             )
                 self.drop.add_widget(self.prod)
+                
+                
+        #for mouse over event
+        Window.bind(mouse_pos=self.check_over)
+        
+        self.opacity = .7
+        
+    def check_over(self, instance, value):
+        if self.collide_point(value[0], value[1]):
+            self.opacity = 1
+        else:
+            self.opacity = .7
+                
     
     def do_drop(self, w):
         self.drop.open(self)
@@ -251,7 +274,7 @@ class CheckItem(BoxLayout):
                                     )
         self.add_widget(self.checkbox)
         
-        self.label = Label(text=kwargs.get('label'), markup=True, size_hint_x=None, width=200, text_size=(200,None))
+        self.label = Label(text=kwargs.get('label'), markup=True, size_hint_x=None, width=200, text_size=(190,None))
         self.add_widget(self.label)
         
 class ProductFilter(Fieldset):
