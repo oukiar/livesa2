@@ -22,6 +22,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.dropdown import DropDown
 from kivy.uix.checkbox import CheckBox
+from kivy.uix.togglebutton import ToggleButton
 
 from kivy.graphics import Color, Rectangle
 from kivy.core.window import Window
@@ -47,6 +48,26 @@ class CustomButton(Button):
                                            #pos=(100,100),
                                            **kwargs)
 
+class DropDownList(DropDown):
+    def __init__(self, **kwargs):
+        super(DropDownList, self).__init__(**kwargs)
+        
+        self.container.padding = 5
+        
+        with self.canvas.before:
+            Color(1, 1, 1, .8)  # colors range from 0-1 instead of 0-255
+            self.rect = Rectangle(source='styles/backgrounds/droplistopened.png', size=self.size, pos=self.pos)
+
+        self.bind(size=self._update_rect, pos=self._update_rect)
+        
+
+    def _update_rect(self, instance, value):
+        self.rect.pos = instance.pos
+        self.rect.size = instance.size
+        
+    def on_select(self, data):
+        print data
+
 class DropButton(Button):
     
     def __init__(self, **kwargs):
@@ -55,19 +76,29 @@ class DropButton(Button):
         super(DropButton, self).__init__(background_normal='styles/backgrounds/droplist.png',
                                            background_down='styles/backgrounds/droplistdown.png',
                                             markup=True,
-                                         font_size=24,
+                                            font_size=24,
+                                            on_release=self.do_drop,
                                            **kwargs)
                                            
-        self.drop = DropDown()
+        self.drop = DropDownList()
                                            
         self.values = kwargs.get('values', None)
+        self.item_cls = kwargs.get('item_cls', Button)
+        self.item_textcolor = kwargs.get('item_textcolor', 'FFFFFF')
+        #self.item_kwargs = kwargs.get('item_kwargs', {})
         
         if self.values != None:
             
             #llenar todos los elementos
             for i in sorted(self.values):
-                self.prod = CheckItem(label=i)
+                self.prod = self.item_cls(size_hint_y=None, 
+                                            height=50, 
+                                            label='[color=%s]'%self.item_textcolor + i + '[/color]'
+                                            )
                 self.drop.add_widget(self.prod)
+    
+    def do_drop(self, w):
+        self.drop.open(self)
 
 class DateButton(Button):
     
@@ -214,14 +245,158 @@ class CheckItem(BoxLayout):
     def __init__(self, **kwargs):
         super(CheckItem, self).__init__(**kwargs)
         
-        self.checkbox = CheckBox(size_hint_x=None, width=50)
+        self.checkbox = CheckBox(size_hint_x=None, width=50, 
+                                    background_checkbox_normal='styles/backgrounds/checkbox.png',
+                                    background_checkbox_down='styles/backgrounds/checkbox_active.png'
+                                    )
         self.add_widget(self.checkbox)
         
-        self.label = Label(text=kwargs.get('label'), markup=True, size_hint_x=None, width=200)
+        self.label = Label(text=kwargs.get('label'), markup=True, size_hint_x=None, width=200, text_size=(200,None))
         self.add_widget(self.label)
         
 class ProductFilter(Fieldset):
-    pass
+    def __init__(self, **kwargs):
+        super(ProductFilter, self).__init__(padding=20, spacing=20, size_hint_y=None, height=80, **kwargs)
+        
+        self.productos = DropButton(text='[color=000000]Productos[/color]', 
+                                    item_cls=CheckItem,
+                                    item_textcolor='000000',
+                                    values= {'AGUARDIENTE':'AC',
+                                    'ALCOHOL':'AL',
+                                    'ANIS':'AN',
+                                    'DESTILADO':'BA',
+                                    'HABANERO':'HB',
+                                    'JEREZ':'JZ',
+                                    'LICOR':'LC',
+                                    'MEZCAL':'MZ',
+                                    'PARRAS':'PA',
+                                    'RON':'RN',
+                                    'SANGRITA':'SG',
+                                    'SIDRA AMBAR':'SB',
+                                    'SIDRA ROSADA':'SR',
+                                    'TEQUILA':'TQ',
+                                    'VERMOUTH':'VT',
+                                    'VINO DE CONSAGRAR':'VG',
+                                    'VODKA':'VK',
+                                    'ESTUCHE MINIATURA MEXICANO':'E1',
+                                    'ESTUCHE MINIATURA MTY':'E2',
+                                    'ESTUCHE MINIATURA REGIONAL':'E3',
+                                    'CHAROLA MINIATURA MEXICANO':'E4'
+                                    })
+                                    
+        self.marcas = DropButton(text='[color=000000]Marcas[/color]',
+                                    item_cls=CheckItem,
+                                    item_textcolor='000000',
+                                    values = {'38':'TR',
+                                    'AJITA':'AJ',
+                                    'AMECA Y ANAMARINA':'AM',
+                                    'BARANTRO':'BT',
+                                    'BOLA DE ORO':'BL',
+                                    'CAFKA':'CF',
+                                    'CAÑONAZO':'CA',
+                                    'CHOPERENA':'CN',
+                                    'DEL CORAZON':'CZ',
+                                    'DIVINO':'DV',
+                                    'DOS CORONAS':'DC',
+                                    'EL CHORRITO':'CH',
+                                    'EL JINETE':'JT',
+                                    'EL TIGRE':'TG',
+                                    'FAROLAZO':'FR',
+                                    'FURKEN':'FU',
+                                    'GRAN PEÑUELA':'GP',
+                                    'HIJOS DE VILLA':'HV',
+                                    'LA LUPE':'LL',
+                                    'LAJITA':'LJ',
+                                    'MARINA':'MR',
+                                    'MATACAÑA':'MT',
+                                    'MOCAMBO':'MM',
+                                    'OTELO':'TL',
+                                    'PETROVA':'PT',
+                                    'PETROVA KINGEBRA':'PK',
+                                    'PLUMA ROJA':'PR',
+                                    'TORINO':'TR',
+                                    'VILLA RICA':'HV',
+                                    'VILLALOBOS':'VL',
+                                    'VILLALOBOS PLATINUM':'VP',
+                                    'VINO DE CONSAGRAR':'GC',
+                                    'MEXICANO':'MX',
+                                    'MONTERREY':'MT',
+                                    'SURTIDO REGIONAL':'RG'
+                                    })
+                                    
+        self.capacidades = DropButton(text='[color=000000]Capacidades[/color]',
+                                    item_cls=CheckItem,
+                                    item_textcolor='000000',
+                                    values = {'0.050':'00',
+                                    '0.200':'20',
+                                    '0.200':'21',
+                                    '0.250':'25',
+                                    '0.355':'35',
+                                    '0.440':'44',
+                                    '0.500':'50',
+                                    '0.690':'69',
+                                    '0.700':'70',
+                                    '0.750':'75',
+                                    '0.950':'95',
+                                    '1.000':'01',
+                                    '1.500':'15',
+                                    '1.690':'16',
+                                    '1.750':'17',
+                                    '3.970':'39',
+                                    '5.000':'50',
+                                    '20.000':'02',
+                                    '200.000':'GR'
+                                    })
+                                    
+        self.tipos = DropButton(text='[color=000000]Tipos[/color]',
+                                    item_cls=CheckItem,
+                                    item_textcolor='000000',
+                                values = {'BLANCO Y C/PERA':'11',
+                                    'BLANCO Y CAFE ESPECIAL':'12',
+                                    'BLANCO LUJO Y LICOR C/GUSANO':'13',
+                                    'ESPECIAL MONTERREY':'14',
+                                    'AÑEJO ESPECIAL':'15',
+                                    '34% Alc. Vol.':'19',
+                                    'ORO':'21',
+                                    'ORO LUJO':'22',
+                                    'ORO EXTRA':'23',
+                                    'REPOSADO':'31',
+                                    'REPOSADO ANIVERSARIO':'32',
+                                    'REPOSADO LUJO':'36',
+                                    'AÑEJO':'41',
+                                    'AÑEJO LUJO':'43',
+                                    'SOLERA':'51',
+                                    'STANDARD':'61',
+                                    'STANDARD LUJO':'63',
+                                    'DESTILADO DE AGAVE':'64',
+                                    '10 AÑOS BUCANERO':'70',
+                                    'CIRUELA Y 15 AÑOS':'71',
+                                    'DURAZNO Y 20 AÑOS':'72',
+                                    'MANZANA Y 20 AÑOS ARTE':'73',
+                                    'MEMBRILLO':'74',
+                                    'NANCHE DULCE':'75',
+                                    'NARANJA':'76',
+                                    'PIÑA':'77',
+                                    'ZARZAMORA':'78',
+                                    'LIMON':'79',
+                                    'MANZANA DULCE':'81',
+                                    'NANCHE':'82',
+                                    'TEJOCOTE':'83',
+                                    'HIERBA DEL BURRO':'84',
+                                    'HIERBA MAESTRA':'85',
+                                    'HERBAL Y PLATANO':'86',
+                                    'MELON':'87',
+                                    'MENTA BLANCA':'88',
+                                    'BLUE CURACAO':'89',
+                                    'CAFE':'91',
+                                    'CAFE MINI REDONDA':'92',
+                                    'ESTUCHES MINI Y SIN TIPO':'99'
+                                    })
+        
+        self.add_widget(self.productos)
+        self.add_widget(self.marcas)
+        self.add_widget(self.capacidades)
+        self.add_widget(self.tipos)
 
 class Livesa(FloatLayout):
     '''
@@ -245,11 +420,7 @@ class Livesa(FloatLayout):
         self.layout.add_widget(SuperiorMenu() )
         
         #CATEGORIAS
-        self.fieldset_categorias = Fieldset(padding=20, spacing=20, size_hint_y=None, height=80)
-        self.fieldset_categorias.add_widget(DropButton(text='[color=000000]Productos[/color]'))
-        self.fieldset_categorias.add_widget(DropButton(text='[color=000000]Marcas[/color]'))
-        self.fieldset_categorias.add_widget(DropButton(text='[color=000000]Capacidades[/color]'))
-        self.fieldset_categorias.add_widget(DropButton(text='[color=000000]Tipos[/color]'))
+        self.fieldset_categorias = ProductFilter()
         self.layout.add_widget(self.fieldset_categorias)
         
         #FECHAS
