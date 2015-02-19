@@ -34,7 +34,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.graphics import Color, Rectangle
 from kivy.core.window import Window
 
-import time, firebirdsql
+import time, firebirdsql, json
 
 class CustomButton(Button):
     '''
@@ -335,6 +335,7 @@ class ProductFilter(Fieldset):
         self.marcas = DropButton(text='[color=000000]Marcas[/color]',
                                     item_cls=CheckItem,
                                     item_textcolor='000000',
+                                    #item_kwargs={'on_active':self.selected_marca},
                                     values = {'38':{'key':'TR', 'productos':[], 'capacidades':[], 'tipos':[], 'refcount':0},
                                     'AJITA':{'key':'AJ', 'productos':[], 'capacidades':[], 'tipos':[], 'refcount':0},
                                     'AMECA Y ANAMARINA':{'key':'AM', 'productos':[], 'capacidades':[], 'tipos':[], 'refcount':0},
@@ -375,6 +376,7 @@ class ProductFilter(Fieldset):
         self.capacidades = DropButton(text='[color=000000]Capacidades[/color]',
                                     item_cls=CheckItem,
                                     item_textcolor='000000',
+                                    #item_kwargs={'on_active':self.selected_capacidad},
                                     values = {'0.050':{'key':'00', 'productos':[], 'marcas':[], 'tipos':[], 'refcount':0},
                                     '0.200':{'key':'20', 'productos':[], 'marcas':[], 'tipos':[], 'refcount':0},
                                     '0.200':{'key':'21', 'productos':[], 'marcas':[], 'tipos':[], 'refcount':0},
@@ -399,6 +401,7 @@ class ProductFilter(Fieldset):
         self.tipos = DropButton(text='[color=000000]Tipos[/color]',
                                     item_cls=CheckItem,
                                     item_textcolor='000000',
+                                    #item_kwargs={'on_active':self.selected_tipo},
                                 values = {'BLANCO Y C/PERA':{'key':'11', 'productos':[], 'marcas':[], 'capacidades':[], 'refcount':0},
                                     'BLANCO Y CAFE ESPECIAL':{'key':'12', 'productos':[], 'marcas':[], 'capacidades':[], 'refcount':0},
                                     'BLANCO LUJO Y LICOR C/GUSANO':{'key':'13', 'productos':[], 'marcas':[], 'capacidades':[], 'refcount':0},
@@ -447,32 +450,117 @@ class ProductFilter(Fieldset):
         self.add_widget(self.tipos)
         
         
+        #deshabilitada la carga de las dependencias de los filtros, es muy lenta
+        #self.save_filtersinfo()
+        
+        #load filters info
+        with open('filtersinfo.json') as f:
+            self.productos.values, self.marcas.values, self.capacidades.values, self.tipos.values = json.loads(f.read())
+        
+        #only for testing
+        #self.set_active_filteroption(self.productos, 'AL')
+        
+    def save_filtersinfo(self):
         #hacemos el trabajo de sacar la relacion de los filtros .... muy muy lento por ahora
         self.fill_productosdeps()
         self.fill_marcasdeps()
         self.fill_capacidadesdeps()
         self.fill_tiposdeps()
         
+        #guardar la relacion de los filtros
+        with open('filtersinfo.json', 'w+') as f:
+            f.write(json.dumps([self.productos.values,
+                                self.marcas.values,
+                                self.capacidades.values,
+                                self.tipos.values])
+                                )
+        
         
     def selected_product(self, w, val):
         producto = w.parent.label.text.split(']')[1].split('[')[0]
-        print producto, val
         
         if val:
-            #marcas ... Agrega los que no esten de este producto
+            #marcas de este producto
             for marcakey in self.productos.values[producto]['marcas']:
-                if self.is_added_to(self.marcas, marcakey):
-                    #incrementar contador de referencias
-                    
+                self.set_active_filteroption(self.marcas, marcakey)
             
             #capacidades
+            for capacidadkey in self.productos.values[producto]['capacidades']:
+                self.set_active_filteroption(self.capacidades, capacidadkey)
             
             #tipos
+            for tipokey in self.productos.values[producto]['tipos']:
+                self.set_active_filteroption(self.tipos, tipokey)
+                
+ 
+    def selected_marca(self, w, val):
+        marca = w.parent.label.text.split(']')[1].split('[')[0]
         
-    def is_added_to(self, dropcontrol, key):
+        if val:
+            #productos de este producto
+            for productokey in self.marcas.values[marca]['productos']:
+                self.set_active_filteroption(self.productos, productokey)
+            
+            #capacidades
+            for capacidadkey in self.marcas.values[marca]['capacidades']:
+                self.set_active_filteroption(self.capacidades, capacidadkey)
+            
+            #tipos
+            for tipokey in self.marcas.values[marca]['tipos']:
+                self.set_active_filteroption(self.tipos, tipokey)
+      
+ 
+    def selected_capacidad(self, w, val):
+        capacidad = w.parent.label.text.split(']')[1].split('[')[0]
         
+        if val:
+            
+            #productos de este producto
+            for productokey in self.capacidades.values[capacidad]['productos']:
+                self.set_active_filteroption(self.productos, productokey)
+                
+            #marcas de este producto
+            for marcakey in self.capacidades.values[capacidad]['marcas']:
+                self.set_active_filteroption(self.marcas, marcakey)
+            
+            #tipos
+            for tipokey in self.capacidades.values[capacidad]['tipos']:
+                self.set_active_filteroption(self.tipos, tipokey)
         
-    def 
+ 
+    def selected_tipo(self, w, val):
+        tipo = w.parent.label.text.split(']')[1].split('[')[0]
+        
+        if val:            
+            #productos de este producto
+            for productokey in self.tipos.values[tipo]['productos']:
+                self.set_active_filteroption(self.productos, productokey)
+                
+            #marcas de este producto
+            for marcakey in self.tipos.values[tipo]['marcas']:
+                self.set_active_filteroption(self.marcas, marcakey)
+            
+            #capacidades
+            for capacidadkey in self.tipos.values[tipo]['capacidades']:
+                self.set_active_filteroption(self.capacidades, capacidadkey)
+                
+        
+    def set_active_filteroption(self, dropcontrol, key):
+        
+        searchval = self.get_value_bykey(dropcontrol, key)
+            
+        for w in dropcontrol.drop.children[0].children:
+            
+            labeltext = w.label.text.split(']')[1].split('[')[0]
+            
+            if searchval == labeltext:
+                w.checkbox.active = True
+                break
+                    
+    def get_value_bykey(self, dropcontrol, key):
+        for i in dropcontrol.values:
+            if dropcontrol.values[i]['key'] == key:
+                return i
         
     def fill_productosdeps(self):
         '''
