@@ -92,7 +92,6 @@ class DropButton(Button):
         #llamamos a la funcion contructor del objeto button y le indicamos por default la imagen que usara de fondo
         super(DropButton, self).__init__(background_normal='styles/backgrounds/droplist.png',
                                            background_down='styles/backgrounds/droplistdown.png',
-                                            markup=True,
                                             font_size=24,
                                             on_release=self.do_drop,
                                            **kwargs)
@@ -101,7 +100,6 @@ class DropButton(Button):
                                            
         self.values = kwargs.get('values', None)
         self.item_cls = kwargs.get('item_cls', Button)
-        self.item_textcolor = kwargs.get('item_textcolor', 'FFFFFF')
         self.item_kwargs = kwargs.get('item_kwargs', {})
         
         if self.values != None:
@@ -109,9 +107,8 @@ class DropButton(Button):
             #llenar todos los elementos
             for i in sorted(self.values):
                 self.prod = self.item_cls(size_hint_y=None, 
-                                            height=50, 
-                                            label='[color=%s]'%self.item_textcolor + i + '[/color]',
-                                            text='[color=%s]'%self.item_textcolor + i + '[/color]',
+                                            height=50,
+                                            text = i,
                                             **self.item_kwargs
                                             )
                 self.drop.add_widget(self.prod)
@@ -148,23 +145,23 @@ class DatePicker(BoxLayout):
     def __init__(self, **kwargs):
         
         super(DatePicker, self).__init__(size_hint=(None,None),
-                                            size=(250,40),
+                                            size=(250,30),
                                             **kwargs)
     
         
-        self.add_widget(Label(text='[color=000000]'+kwargs.get('label')+'[/color]', markup=True))
+        self.add_widget(Label(text=kwargs.get('label'), color=(0,0,0,1)))
     
-        self.btn_day = DateButton(text='[color=000000]'+time.strftime("%d")+'[/color]', on_release=self.show_days)
+        self.btn_day = DateButton(text=time.strftime("%d"), on_release=self.show_days)
         self.add_widget(self.btn_day)
         
-        self.add_widget(Label(text='[color=000000]/[/color]', size_hint_x=None, width=10, markup=True))
+        self.add_widget(Label(text='/', size_hint_x=None, width=10, color=(0,0,0,1)))
         
-        self.btn_month = DateButton(text='[color=000000]'+time.strftime("%m")+'[/color]', on_release=self.show_months )
+        self.btn_month = DateButton(text=time.strftime("%m"), on_release=self.show_months )
         self.add_widget(self.btn_month)
         
-        self.add_widget(Label(text='[color=000000]/[/color]', size_hint_x=None, width=10, markup=True))
+        self.add_widget(Label(text='/', size_hint_x=None, width=10, color=(0,0,0,1)))
         
-        self.btn_year = DateButton(text='[color=000000]'+time.strftime("%Y")+'[/color]', on_release=self.show_years )
+        self.btn_year = DateButton(text=time.strftime("%Y"), on_release=self.show_years )
         self.add_widget(self.btn_year)
         
         #day options
@@ -288,7 +285,9 @@ class CheckItem(BoxLayout):
                                     )
         self.add_widget(self.checkbox)
         
-        self.label = LabelButton(text=kwargs.get('label'), markup=True, size_hint_x=None, width=200, text_size=(190,None), on_press=self.docheck)
+        self.color = kwargs.get('color', (1,1,1,1) )
+        
+        self.label = LabelButton(text=kwargs.get('text'), color=self.color, size_hint_x=None, width=200, text_size=(190,None), on_press=self.docheck)
         self.add_widget(self.label)
         
         if self.on_active != None:             
@@ -305,10 +304,10 @@ class ProductFilter(Fieldset):
     def __init__(self, **kwargs):
         super(ProductFilter, self).__init__(padding=20, spacing=20, size_hint_y=None, height=80, **kwargs)
         
-        self.productos = DropButton(text='[color=000000]Productos[/color]', 
+        self.productos = DropButton(text='Productos', 
+                                    color=(0,0,0,1),
                                     item_cls=CheckItem,
-                                    item_textcolor='000000',
-                                    item_kwargs={'on_active':self.selected_product},
+                                    item_kwargs={'on_active':self.selected_product, 'color':(0,0,0,1)},
                                     values= {'AGUARDIENTE':{'key':'AC', 'marcas':[], 'capacidades':[], 'tipos':[], 'refcount':0},
                                     'ALCOHOL':{'key':'AL', 'marcas':[], 'capacidades':[], 'tipos':[], 'refcount':0},
                                     'ANIS':{'key':'AN', 'marcas':[], 'capacidades':[], 'tipos':[], 'refcount':0},
@@ -332,10 +331,11 @@ class ProductFilter(Fieldset):
                                     'CHAROLA MINIATURA MEXICANO':{'key':'E4', 'marcas':[], 'capacidades':[], 'tipos':[], 'refcount':0}
                                     })
                                     
-        self.marcas = DropButton(text='[color=000000]Marcas[/color]',
+        self.marcas = DropButton(text='Marcas',
                                     item_cls=CheckItem,
-                                    item_textcolor='000000',
+                                    color=(0,0,0,1),
                                     #item_kwargs={'on_active':self.selected_marca},
+                                    item_kwargs={'color':(0,0,0,1) },
                                     values = {'38':{'key':'TR', 'productos':[], 'capacidades':[], 'tipos':[], 'refcount':0},
                                     'AJITA':{'key':'AJ', 'productos':[], 'capacidades':[], 'tipos':[], 'refcount':0},
                                     'AMECA Y ANAMARINA':{'key':'AM', 'productos':[], 'capacidades':[], 'tipos':[], 'refcount':0},
@@ -373,10 +373,11 @@ class ProductFilter(Fieldset):
                                     'SURTIDO REGIONAL':{'key':'RG', 'productos':[], 'capacidades':[], 'tipos':[], 'refcount':0}
                                     })
                                     
-        self.capacidades = DropButton(text='[color=000000]Capacidades[/color]',
+        self.capacidades = DropButton(text='Capacidades',
+                                    color=(0,0,0,1),
                                     item_cls=CheckItem,
-                                    item_textcolor='000000',
                                     #item_kwargs={'on_active':self.selected_capacidad},
+                                    item_kwargs={'color':(0,0,0,1)},
                                     values = {'0.050':{'key':'00', 'productos':[], 'marcas':[], 'tipos':[], 'refcount':0},
                                     '0.200':{'key':'20', 'productos':[], 'marcas':[], 'tipos':[], 'refcount':0},
                                     '0.200':{'key':'21', 'productos':[], 'marcas':[], 'tipos':[], 'refcount':0},
@@ -398,10 +399,11 @@ class ProductFilter(Fieldset):
                                     '200.000':{'key':'GR', 'productos':[], 'marcas':[], 'tipos':[], 'refcount':0}
                                     })
                                     
-        self.tipos = DropButton(text='[color=000000]Tipos[/color]',
+        self.tipos = DropButton(text='Tipos',
+                                    color=(0,0,0,1),
                                     item_cls=CheckItem,
-                                    item_textcolor='000000',
                                     #item_kwargs={'on_active':self.selected_tipo},
+                                    item_kwargs={'color':(0,0,0,1)},
                                 values = {'BLANCO Y C/PERA':{'key':'11', 'productos':[], 'marcas':[], 'capacidades':[], 'refcount':0},
                                     'BLANCO Y CAFE ESPECIAL':{'key':'12', 'productos':[], 'marcas':[], 'capacidades':[], 'refcount':0},
                                     'BLANCO LUJO Y LICOR C/GUSANO':{'key':'13', 'productos':[], 'marcas':[], 'capacidades':[], 'refcount':0},
@@ -450,7 +452,7 @@ class ProductFilter(Fieldset):
         self.add_widget(self.tipos)
         
         
-        #deshabilitada la carga de las dependencias de los filtros, es muy lenta
+        #deshabilitada la carga de las dependencias de los filtros (directo de la base de datos), es muy lenta
         #self.save_filtersinfo()
         
         #load filters info
@@ -477,7 +479,8 @@ class ProductFilter(Fieldset):
         
         
     def selected_product(self, w, val):
-        producto = w.parent.label.text.split(']')[1].split('[')[0]
+        #producto = w.parent.label.text.split(']')[1].split('[')[0]
+        producto = w.parent.label.text
         
         if val:
             #marcas de este producto
@@ -551,7 +554,8 @@ class ProductFilter(Fieldset):
             
         for w in dropcontrol.drop.children[0].children:
             
-            labeltext = w.label.text.split(']')[1].split('[')[0]
+            #labeltext = w.label.text.split(']')[1].split('[')[0]
+            labeltext = w.label.text
             
             if searchval == labeltext:
                 w.checkbox.active = True
@@ -607,9 +611,6 @@ class ProductFilter(Fieldset):
                             self.productos.values[i]['tipos'].append(tipo_cve)
             
             
-        #print self.productos.values['AGUARDIENTE']['marcas']
-        #print self.productos.values['AGUARDIENTE']['capacidades']
-        #print self.productos.values['AGUARDIENTE']['tipos']
     
     def fill_marcasdeps(self):
         '''
@@ -773,7 +774,7 @@ class Livesa(FloatLayout):
         self.layout.add_widget(self.fieldset_categorias)
         
         #FECHAS
-        self.fieldset_fechas = Fieldset(padding=15, orientation='vertical', size_hint_y=None, height=100)
+        self.fieldset_fechas = Fieldset(padding=15, size_hint_y=None, height=100)
         self.box_fechas = BoxLayout()
         
         self.fromdate = DatePicker(label='Desde: ')
@@ -784,19 +785,32 @@ class Livesa(FloatLayout):
         
         self.fieldset_fechas.add_widget(self.box_fechas)
         
-        self.fieldset_fechas.add_widget(CheckItem(label='[color=000000]Hacer comparacion de fechas[/color]'))
+        self.cbx_compararfechas = CheckItem(text='Hacer comparacion de fechas', color=(0,0,0,1) )
+        self.cbx_compararfechas.checkbox.bind(active=self.on_compararfechas)
+        self.fieldset_fechas.add_widget(self.cbx_compararfechas)
         
+    
+        self.box_fechascmp = BoxLayout()
+        self.fromdatecmp = DatePicker(label='Desde: ')
+        self.todatecmp = DatePicker(label='Hasta: ')
+        self.box_fechascmp.add_widget( self.fromdatecmp )
+        self.box_fechascmp.add_widget( self.todatecmp )
         
         self.layout.add_widget(self.fieldset_fechas)
         
         #LUGAR-CLIENTE
         self.fieldset_lugarcliente = BoxLayout(padding=20, spacing=20, size_hint_y=None, height=80)
         
-        zonasvalues = [str(i)[4:][:3] for i in con.cursor().execute("select DISTINCT CVE_VEND from CLIE01").fetchall()]
-        self.zonas = DropButton(text='[color=000000]Lugar / Zona[/color]', 
+        zonasvalues = []
+        for i in con.cursor().execute("select DISTINCT CVE_VEND from CLIE01").fetchall():
+            if i[0] != None:
+                zonasvalues.append(str(i)[4:][:3] )
+                
+        self.zonas = DropButton(text='Lugar / Zona', 
                                     values=zonasvalues, 
+                                    color=(0,0,0,1),
                                     item_cls=CheckItem,
-                                    item_textcolor='000000'
+                                    item_kwargs={'color':(0,0,0,1)}
                                     )
         
         '''
@@ -824,7 +838,7 @@ class Livesa(FloatLayout):
         self.fieldset_lugarcliente.add_widget( self.zonas )
         
         
-        self.fieldset_lugarcliente.add_widget(DropButton(text='[color=000000]Clientes[/color]'))
+        self.fieldset_lugarcliente.add_widget(DropButton(text='Clientes', color=(0,0,0,1)))
         
         self.layout.add_widget(self.fieldset_lugarcliente)
         
@@ -843,6 +857,11 @@ class Livesa(FloatLayout):
         
         self.add_widget(self.layout)
         
+    def on_compararfechas(self, w, val):
+        if val:
+            self.fieldset_fechas.add_widget(self.box_fechascmp)
+        else:
+            self.fieldset_fechas.remove_widget(self.box_fechascmp)
         
     def on_consulta(self, w):
         '''
@@ -862,7 +881,7 @@ class Livesa(FloatLayout):
                 #print i.label.text
                 
                 #obtener el codigo
-                cod = self.fieldset_categorias.productos.values[i.label.text]
+                cod = self.fieldset_categorias.productos.values[i.label.text]['key']
                 
                 #print cod
                 
@@ -883,7 +902,7 @@ class Livesa(FloatLayout):
                 #print i.label.text
                 
                 #obtener el codigo
-                cod = self.fieldset_categorias.tipos.values[i.label.text]
+                cod = self.fieldset_categorias.tipos.values[i.label.text]['key']
                 
                 #print cod
                 
@@ -908,7 +927,7 @@ class Livesa(FloatLayout):
             if i.checkbox.active:
                 
                 #obtener el codigo
-                cod = self.fieldset_categorias.marcas.values[i.label.text]
+                cod = self.fieldset_categorias.marcas.values[i.label.text]['key']
                 
                 #si es el primer like, ponerlo como el primero
                 if sqlproduct == '':
@@ -932,7 +951,7 @@ class Livesa(FloatLayout):
             if i.checkbox.active:
                 
                 #obtener el codigo
-                cod = self.fieldset_categorias.capacidades.values[i.label.text]
+                cod = self.fieldset_categorias.capacidades.values[i.label.text]['key']
                 
                 #si es el primer like, ponerlo como el primero
                 if sqlproduct == '':
